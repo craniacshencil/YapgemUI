@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Countdown from "./Countdown";
 import { Loader2, Clock, Mic } from "lucide-react";
 
 export default function SpeechTopicGenerator() {
@@ -7,6 +8,7 @@ export default function SpeechTopicGenerator() {
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState(null);
   const [error, setError] = useState("");
+  const [countdownComplete, setCountdownComplete] = useState(false);
 
   const handleSubmit = async () => {
     if (!prepTime || !speakTime) {
@@ -22,6 +24,7 @@ export default function SpeechTopicGenerator() {
     setLoading(true);
     setError("");
     setResponse(null);
+    setCountdownComplete(false);
 
     try {
       const res = await fetch(
@@ -50,6 +53,7 @@ export default function SpeechTopicGenerator() {
     setResponse(null);
     setError("");
     setLoading(false);
+    setCountdownComplete(false);
   };
 
   const handleKeyPress = (e) => {
@@ -123,6 +127,14 @@ export default function SpeechTopicGenerator() {
               Generating your speech topic...
             </p>
           </div>
+        )}
+
+        {/* Countdown before speaking */}
+        {response && !countdownComplete && (
+          <Countdown
+            seconds={Number(prepTime)}
+            onComplete={() => setCountdownComplete(true)}
+          />
         )}
 
         {/* Response Display Component */}
