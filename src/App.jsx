@@ -1,4 +1,4 @@
-import SpeechRecorder from "./components/SpeechRecorder";
+import SpeechRecorder from "./components/SpeechRecorder/SpeechRecorder";
 import SpeechTopicGenerator from "./components/TopicGenerator";
 
 function App() {
