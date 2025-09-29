@@ -1,21 +1,28 @@
 import { useState } from "react";
 import Countdown from "./Countdown";
 import { Loader2, Clock, Mic } from "lucide-react";
+import useSpeechStore from "../store/useSpeechStore";
 
 export default function SpeechTopicGenerator() {
-  const [prepTime, setPrepTime] = useState("");
-  const [speakTime, setSpeakTime] = useState("");
+  const {
+    prepTime,
+    speakTime,
+    response,
+    countdownComplete,
+    setPrepTime,
+    setSpeakTime,
+    setResponse,
+    setCountdownComplete,
+  } = useSpeechStore();
+
   const [loading, setLoading] = useState(false);
-  const [response, setResponse] = useState(null);
   const [error, setError] = useState("");
-  const [countdownComplete, setCountdownComplete] = useState(false);
 
   const handleSubmit = async () => {
     if (!prepTime || !speakTime) {
       setError("Please enter both prep time and speaking time");
       return;
     }
-
     if (prepTime <= 0 || speakTime <= 0) {
       setError("Time values must be positive");
       return;
@@ -31,9 +38,7 @@ export default function SpeechTopicGenerator() {
         `http://localhost:8000/generate-topic/${prepTime}/${speakTime}`,
       );
 
-      if (!res.ok) {
-        throw new Error("Failed to fetch topic");
-      }
+      if (!res.ok) throw new Error("Failed to fetch topic");
 
       const data = await res.json();
       setResponse(data);
@@ -45,15 +50,6 @@ export default function SpeechTopicGenerator() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleReset = () => {
-    setPrepTime("");
-    setSpeakTime("");
-    setResponse(null);
-    setError("");
-    setLoading(false);
-    setCountdownComplete(false);
   };
 
   const handleKeyPress = (e) => {
