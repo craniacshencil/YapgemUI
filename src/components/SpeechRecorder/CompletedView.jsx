@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { formatTime } from "../../utils/timeUtils";
+import { formatTime } from "./utils/timeUtils";
 
 const AudioPlayback = ({ audioURL }) => {
   const audioRef = useRef(null);
@@ -107,12 +107,57 @@ const SuccessMessage = ({ duration }) => {
   );
 };
 
-export const CompletedView = ({ duration, audioURL }) => {
+const TranscriptView = ({ transcript, recognitionError, isProcessing }) => {
+  return (
+    <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+      <h3 className="text-lg font-semibold text-gray-800 mb-2">Transcript</h3>
+
+      {recognitionError && (
+        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded">
+          <p className="text-red-700 text-sm">
+            Speech recognition error: {recognitionError}
+            {recognitionError === "network" && (
+              <span className="block mt-1">
+                Check your internet connection or try using Chrome/Edge browser.
+              </span>
+            )}
+            {recognitionError === "not-supported" && (
+              <span className="block mt-1">
+                Your browser doesn't support Speech Recognition. Please use
+                Chrome or Edge.
+              </span>
+            )}
+          </p>
+        </div>
+      )}
+
+      {isProcessing ? (
+        <p className="text-gray-600">Processing transcript...</p>
+      ) : (
+        <p className="text-gray-700 whitespace-pre-wrap">
+          {transcript || "No transcript available"}
+        </p>
+      )}
+    </div>
+  );
+};
+export const CompletedView = ({
+  duration,
+  audioURL,
+  transcript,
+  recognitionError,
+  isProcessing,
+}) => {
   return (
     <div className="space-y-6">
       <SuccessMessage duration={duration} />
       <AudioPlayback audioURL={audioURL} />
       <RecordingStats duration={duration} />
+      <TranscriptView
+        transcript={transcript}
+        recognitionError={recognitionError}
+        isProcessing={isProcessing}
+      />
     </div>
   );
 };

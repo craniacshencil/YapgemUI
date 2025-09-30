@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Loader2, Clock, Mic } from "lucide-react";
 
 // Countdown component
 function Countdown({ seconds, onComplete }) {

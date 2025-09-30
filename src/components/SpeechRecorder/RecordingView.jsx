@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
-import { formatTime } from "../../utils/timeUtils";
-import { useAudioVisualizer } from "../../hooks/useAudioVisualizer";
+import { formatTime } from "./utils/timeUtils";
+import { useAudioVisualizer } from "./hooks/useAudioVisualizer";
 
 const RecordingTimer = ({ elapsed, remaining }) => {
   return (
