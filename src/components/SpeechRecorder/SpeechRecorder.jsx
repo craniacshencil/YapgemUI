@@ -8,7 +8,13 @@ import { RecordingView } from "./RecordingView";
 import { CompletedView } from "./CompletedView";
 
 export default function SpeechRecorder() {
-  const { speakTime, countdownComplete } = useSpeechStore();
+  const {
+    speakTime,
+    countdownComplete,
+    response,
+    setAnalysis,
+    setIsAnalysisLoading,
+  } = useSpeechStore();
   const [recordingComplete, setRecordingComplete] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -48,23 +54,23 @@ export default function SpeechRecorder() {
     if (recordingComplete && transcript) {
       const sendTranscript = async () => {
         setIsProcessing(true);
+        setIsAnalysisLoading(true);
+        let topic = response.topic + " " + response.bullet_points.join(" ");
         try {
           const data = await speechAnalysisService.analyzeTranscript(
             transcript,
             elapsed,
             speakTime,
+            topic,
           );
-          console.log("Analysis result:", data);
-
-          // Store result in your store
-          // useSpeechStore.getState().setAnalysisResult(data);
+          setAnalysis(data);
         } catch (error) {
           console.error("Error sending transcript:", error);
         } finally {
+          setIsAnalysisLoading(false);
           setIsProcessing(false);
         }
       };
-
       sendTranscript();
     }
   }, [recordingComplete, transcript, elapsed, speakTime]);
