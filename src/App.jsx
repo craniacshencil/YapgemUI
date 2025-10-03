@@ -10,13 +10,16 @@ function App() {
       {!analysis ? (
         <>
           <SpeechTopicGenerator />
-          {response && <SpeechRecorder />}
+          <SpeechRecorder />
         </>
       ) : (
-        <SpeechAnalysisDashboard
-          data={analysis}
-          isLoading={isAnalysisLoading}
-        />
+        <>
+          <SpeechRecorder />
+          <SpeechAnalysisDashboard
+            data={analysis}
+            isLoading={isAnalysisLoading}
+          />
+        </>
       )}
     </>
   );
