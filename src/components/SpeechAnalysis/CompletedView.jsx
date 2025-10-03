@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { formatTime } from "./utils/timeUtils";
+import { formatTime } from "../SpeechRecorder/utils/timeUtils";
 
 const AudioPlayback = ({ audioURL }) => {
   const audioRef = useRef(null);

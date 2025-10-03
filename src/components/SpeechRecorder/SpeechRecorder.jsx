@@ -5,7 +5,6 @@ import { useRecordingTimer } from "./hooks/useRecordingTimer";
 import { useSpeechRecognition } from "./hooks/useSpeechRecognition";
 import { speechAnalysisService } from "./services/speechAnalysisService";
 import { RecordingView } from "./RecordingView";
-import { CompletedView } from "./CompletedView";
 
 export default function SpeechRecorder() {
   const {
@@ -14,9 +13,10 @@ export default function SpeechRecorder() {
     response,
     setAnalysis,
     setIsAnalysisLoading,
+    setRecordingData,
   } = useSpeechStore();
+
   const [recordingComplete, setRecordingComplete] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
 
   const { recording, audioURL, stream, startRecording, stopRecording } =
     useAudioRecorder();
@@ -51,60 +51,73 @@ export default function SpeechRecorder() {
 
   // Send transcript to backend when recording is complete
   useEffect(() => {
-    if (recordingComplete && transcript) {
-      const sendTranscript = async () => {
-        setIsProcessing(true);
+    if (recordingComplete && audioURL && !isRecognizing) {
+      // Wait a bit for speech recognition to finalize
+      const timer = setTimeout(() => {
+        // Set recording data after speech recognition has stopped
+        setRecordingData({
+          duration: elapsed,
+          audioURL: audioURL,
+          transcript: transcript,
+          recognitionError: recognitionError,
+        });
+
+        // If no transcript, don't try to analyze
+        if (!transcript) {
+          return;
+        }
+
         setIsAnalysisLoading(true);
         let topic = response.topic + " " + response.bullet_points.join(" ");
-        try {
-          const data = await speechAnalysisService.analyzeTranscript(
-            transcript,
-            elapsed,
-            speakTime,
-            topic,
-          );
-          setAnalysis(data);
-        } catch (error) {
-          console.error("Error sending transcript:", error);
-        } finally {
-          setIsAnalysisLoading(false);
-          setIsProcessing(false);
-        }
-      };
-      sendTranscript();
+
+        const sendTranscript = async () => {
+          try {
+            const data = await speechAnalysisService.analyzeTranscript(
+              transcript,
+              elapsed,
+              speakTime,
+              topic,
+            );
+            setAnalysis(data);
+          } catch (error) {
+            console.error("Error sending transcript:", error);
+          } finally {
+            setIsAnalysisLoading(false);
+          }
+        };
+
+        sendTranscript();
+      }, 1000); // Give speech recognition 1 second to finalize
+
+      return () => clearTimeout(timer);
     }
-  }, [recordingComplete, transcript, elapsed, speakTime]);
+  }, [
+    recordingComplete,
+    audioURL,
+    isRecognizing,
+    transcript,
+    elapsed,
+    speakTime,
+    recognitionError,
+    response,
+    setRecordingData,
+    setIsAnalysisLoading,
+    setAnalysis,
+  ]);
+
+  // Only show recording view while actively recording
+  if (!recording) {
+    return null;
+  }
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-8 mt-8">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">
-        Speech Recording
-      </h2>
-
-      {!recording && !recordingComplete && (
-        <p className="text-gray-600">Waiting for countdown to finish...</p>
-      )}
-
-      {recording && (
-        <RecordingView
-          elapsed={elapsed}
-          remaining={remaining}
-          speakTime={speakTime}
-          stream={stream}
-        />
-      )}
-
-      {recordingComplete && (
-        <div>
-          <CompletedView
-            duration={elapsed}
-            audioURL={audioURL}
-            transcript={transcript}
-            recognitionError={recognitionError}
-            isProcessing={isProcessing}
-          />
-        </div>
-      )}
+    <div className="max-w-6xl mx-auto">
+      <RecordingView
+        elapsed={elapsed}
+        remaining={remaining}
+        speakTime={speakTime}
+        stream={stream}
+      />
     </div>
   );
 }

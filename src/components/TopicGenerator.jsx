@@ -59,15 +59,14 @@ export default function SpeechTopicGenerator() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
+    <div>
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-800 mb-8 text-center">
-          Speech Topic Generator
-        </h1>
-
         {/* Input Form Component */}
         {!response && !loading && (
           <div className="bg-white rounded-lg shadow-lg p-8 mb-8">
+            <h2 className="text-2xl font-bold text-gray-800 mb-8">
+              Speech Topic Generator
+            </h2>
             <div className="space-y-6">
               <div className="text-black">
                 <label className="flex items-center text-lg font-medium text-gray-700 mb-2">

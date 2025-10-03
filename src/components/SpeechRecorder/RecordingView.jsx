@@ -4,7 +4,7 @@ import { useAudioVisualizer } from "./hooks/useAudioVisualizer";
 
 const RecordingTimer = ({ elapsed, remaining }) => {
   return (
-    <div className="flex justify-between items-center">
+    <div className="mt-5 flex justify-between items-center">
       <div className="text-center flex-1">
         <p className="text-sm text-gray-500 mb-1">Elapsed</p>
         <p className="text-3xl font-bold text-blue-600">
