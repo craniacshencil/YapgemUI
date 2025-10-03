@@ -1,15 +1,23 @@
-import SpeechAnalysisDashboard from "./components/SpeechAnalysis";
+import SpeechAnalysisDashboard from "./components/SpeechAnalysis/SpeechAnalysis";
 import SpeechRecorder from "./components/SpeechRecorder/SpeechRecorder";
 import SpeechTopicGenerator from "./components/TopicGenerator";
 import useSpeechStore from "./store/useSpeechStore";
 
 function App() {
-  const { analysis, isAnalysisLoading } = useSpeechStore();
+  const { analysis, isAnalysisLoading, response } = useSpeechStore();
   return (
     <>
-      <SpeechTopicGenerator />
-      <SpeechRecorder />
-      <SpeechAnalysisDashboard data={analysis} isLoading={isAnalysisLoading} />
+      {!analysis ? (
+        <>
+          <SpeechTopicGenerator />
+          {response && <SpeechRecorder />}
+        </>
+      ) : (
+        <SpeechAnalysisDashboard
+          data={analysis}
+          isLoading={isAnalysisLoading}
+        />
+      )}
     </>
   );
 }

@@ -8,7 +8,7 @@ import {
   Loader2,
 } from "lucide-react";
 
-const SpeechAnalysisDashboard = ({ data, isLoading = false }) => {
+const SpeechAnalysisDashboard = ({ data, isLoading }) => {
   const [activeTab, setActiveTab] = useState("overview");
 
   // Loading state
