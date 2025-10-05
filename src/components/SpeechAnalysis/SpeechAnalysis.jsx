@@ -13,37 +13,10 @@ const SpeechAnalysisDashboard = ({ data, isLoading, recordingData }) => {
   const [activeTab, setActiveTab] = useState("overview");
 
   if (recordingData) {
+    const errorMessage = recordingData.errorMessage;
     return (
       <div className="bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-6 min-h-screen">
         <div className="max-w-6xl mx-auto space-y-8">
-          {/*hasNoTranscript && (
-            <div className="max-w-4xl mx-auto p-4 bg-red-50 border border-red-200 rounded-lg">
-              <div className="flex items-center gap-3">
-                <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
-                <div>
-                  <p className="text-red-700 font-medium">
-                    No speech was recognized
-                  </p>
-                  <p className="text-red-600 text-sm mt-1">
-                    Please try again and make sure your microphone is working
-                    properly.
-                  </p>
-                </div>
-              </div>
-            </div>
-          )*/}
-
-          {/* Show completed view if we have transcript */}
-
-          {!isLoading && (
-            <CompletedView
-              duration={recordingData.duration}
-              audioURL={recordingData.audioURL}
-              transcript={data.extras.transcript}
-              isProcessing={false}
-            />
-          )}
-
           {/* Loading state for analysis */}
           {isLoading && (
             <div className="text-center py-12">
@@ -75,6 +48,31 @@ const SpeechAnalysisDashboard = ({ data, isLoading, recordingData }) => {
                 </div>
               </div>
             </div>
+          )}
+
+          {!isLoading && errorMessage && (
+            <div className="max-w-4xl mx-auto p-4 bg-red-50 border border-red-200 rounded-lg">
+              <div className="flex items-center gap-3">
+                <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
+                <div>
+                  <p className="text-red-700 font-medium">
+                    No speech was recognized
+                  </p>
+                  <p className="text-red-600 text-sm mt-1">{errorMessage}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Show completed view if we have transcript */}
+
+          {!isLoading && !errorMessage && (
+            <CompletedView
+              duration={recordingData.duration}
+              audioURL={recordingData.audioURL}
+              transcript={data?.extras?.transcript || "No transcript"}
+              isProcessing={false}
+            />
           )}
 
           {/* Analysis Results */}

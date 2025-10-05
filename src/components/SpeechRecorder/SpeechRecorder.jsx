@@ -58,7 +58,17 @@ export default function SpeechRecorder() {
               topic, // topic
               "small", // whisper model (optional)
             );
-            setAnalysis(data);
+
+            // Handle Error
+            if (data.detail) {
+              setRecordingData({
+                duration: elapsed,
+                audioURL: audioURL,
+                errorMessage: data.detail,
+              });
+            } else {
+              setAnalysis(data);
+            }
           } catch (error) {
             console.error("Analysis error:", error);
           } finally {

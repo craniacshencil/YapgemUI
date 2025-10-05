@@ -36,7 +36,7 @@ export const speechAnalysisService = {
         body: formData,
       });
 
-      if (!analysisRes.ok) {
+      if (!analysisRes.ok && analysisRes.status != 400) {
         const errorData = await analysisRes.json().catch(() => ({}));
         throw new Error(
           errorData.detail || `Failed to analyze audio: ${analysisRes.status}`,
