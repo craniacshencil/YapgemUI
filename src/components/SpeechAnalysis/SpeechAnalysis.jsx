@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   AlertCircle,
   CheckCircle,
@@ -12,14 +12,16 @@ import { CompletedView } from "./CompletedView";
 const SpeechAnalysisDashboard = ({ data, isLoading, recordingData }) => {
   const [activeTab, setActiveTab] = useState("overview");
 
-  // If we have recording data, always show it (with or without analysis)
-  if (recordingData) {
-    const hasNoTranscript = !recordingData.transcript;
+  // REMOVE THIS, TESTING KE LIE
+  useEffect(() => {
+    console.log(recordingData);
+  }, [recordingData]);
 
+  if (recordingData) {
     return (
       <div className="bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-6 min-h-screen">
         <div className="max-w-6xl mx-auto space-y-8">
-          {hasNoTranscript && (
+          {/*hasNoTranscript && (
             <div className="max-w-4xl mx-auto p-4 bg-red-50 border border-red-200 rounded-lg">
               <div className="flex items-center gap-3">
                 <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
@@ -34,20 +36,19 @@ const SpeechAnalysisDashboard = ({ data, isLoading, recordingData }) => {
                 </div>
               </div>
             </div>
-          )}
+          )*/}
 
           {/* Show completed view if we have transcript */}
-          {!hasNoTranscript && (
-            <CompletedView
-              duration={recordingData.duration}
-              audioURL={recordingData.audioURL}
-              transcript={recordingData.transcript}
-              isProcessing={false}
-            />
-          )}
+
+          <CompletedView
+            duration={recordingData.duration}
+            audioURL={recordingData.audioURL}
+            transcript={recordingData.transcript}
+            isProcessing={false}
+          />
 
           {/* Loading state for analysis */}
-          {isLoading && !hasNoTranscript && (
+          {isLoading && (
             <div className="text-center py-12">
               <Loader2 className="w-16 h-16 text-indigo-600 animate-spin mx-auto mb-4" />
               <h2 className="text-2xl font-bold text-gray-900 mb-2">
@@ -80,7 +81,7 @@ const SpeechAnalysisDashboard = ({ data, isLoading, recordingData }) => {
           )}
 
           {/* Analysis Results */}
-          {data && !hasNoTranscript && (
+          {data && (
             <div>
               {/* Quick Stats Grid */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
@@ -109,10 +110,11 @@ const SpeechAnalysisDashboard = ({ data, isLoading, recordingData }) => {
                       <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}
-                        className={`px-6 py-3 text-sm font-medium transition-colors ${activeTab === tab
+                        className={`px-6 py-3 text-sm font-medium transition-colors ${
+                          activeTab === tab
                             ? "text-indigo-600 border-b-2 border-indigo-600"
                             : "text-gray-600 hover:text-gray-900"
-                          }`}
+                        }`}
                       >
                         {tab.charAt(0).toUpperCase() + tab.slice(1)}
                       </button>
