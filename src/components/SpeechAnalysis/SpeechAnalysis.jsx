@@ -35,12 +35,14 @@ const SpeechAnalysisDashboard = ({ data, isLoading, recordingData }) => {
 
           {/* Show completed view if we have transcript */}
 
-          <CompletedView
-            duration={recordingData.duration}
-            audioURL={recordingData.audioURL}
-            transcript={data.extras.transcript}
-            isProcessing={false}
-          />
+          {!isLoading && (
+            <CompletedView
+              duration={recordingData.duration}
+              audioURL={recordingData.audioURL}
+              transcript={data.extras.transcript}
+              isProcessing={false}
+            />
+          )}
 
           {/* Loading state for analysis */}
           {isLoading && (
