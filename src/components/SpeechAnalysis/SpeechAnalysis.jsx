@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   AlertCircle,
   CheckCircle,
@@ -11,11 +11,6 @@ import { CompletedView } from "./CompletedView";
 
 const SpeechAnalysisDashboard = ({ data, isLoading, recordingData }) => {
   const [activeTab, setActiveTab] = useState("overview");
-
-  // REMOVE THIS, TESTING KE LIE
-  useEffect(() => {
-    console.log(recordingData);
-  }, [recordingData]);
 
   if (recordingData) {
     return (
@@ -43,7 +38,7 @@ const SpeechAnalysisDashboard = ({ data, isLoading, recordingData }) => {
           <CompletedView
             duration={recordingData.duration}
             audioURL={recordingData.audioURL}
-            transcript={recordingData.transcript}
+            transcript={data.extras.transcript}
             isProcessing={false}
           />
 
