@@ -107,29 +107,10 @@ const SuccessMessage = ({ duration }) => {
   );
 };
 
-const TranscriptView = ({ transcript, recognitionError, isProcessing }) => {
+const TranscriptView = ({ transcript, isProcessing }) => {
   return (
     <div className="mt-6 p-4 bg-gray-50 rounded-lg">
       <h3 className="text-lg font-semibold text-gray-800 mb-2">Transcript</h3>
-
-      {recognitionError && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded">
-          <p className="text-red-700 text-sm">
-            Speech recognition error: {recognitionError}
-            {recognitionError === "network" && (
-              <span className="block mt-1">
-                Check your internet connection or try using Chrome/Edge browser.
-              </span>
-            )}
-            {recognitionError === "not-supported" && (
-              <span className="block mt-1">
-                Your browser doesn't support Speech Recognition. Please use
-                Chrome or Edge.
-              </span>
-            )}
-          </p>
-        </div>
-      )}
 
       {isProcessing ? (
         <p className="text-gray-600">Processing transcript...</p>
@@ -144,20 +125,15 @@ const TranscriptView = ({ transcript, recognitionError, isProcessing }) => {
 export const CompletedView = ({
   duration,
   audioURL,
-  transcript,
-  recognitionError,
   isProcessing,
+  transcript,
 }) => {
   return (
     <div className="space-y-6">
       <SuccessMessage duration={duration} />
       <AudioPlayback audioURL={audioURL} />
       <RecordingStats duration={duration} />
-      <TranscriptView
-        transcript={transcript}
-        recognitionError={recognitionError}
-        isProcessing={isProcessing}
-      />
+      <TranscriptView transcript={transcript} isProcessing={isProcessing} />
     </div>
   );
 };

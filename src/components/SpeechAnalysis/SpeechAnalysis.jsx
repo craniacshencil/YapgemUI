@@ -19,7 +19,6 @@ const SpeechAnalysisDashboard = ({ data, isLoading, recordingData }) => {
     return (
       <div className="bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-6 min-h-screen">
         <div className="max-w-6xl mx-auto space-y-8">
-          {/* Show error if no transcript */}
           {hasNoTranscript && (
             <div className="max-w-4xl mx-auto p-4 bg-red-50 border border-red-200 rounded-lg">
               <div className="flex items-center gap-3">
@@ -43,7 +42,6 @@ const SpeechAnalysisDashboard = ({ data, isLoading, recordingData }) => {
               duration={recordingData.duration}
               audioURL={recordingData.audioURL}
               transcript={recordingData.transcript}
-              recognitionError={recordingData.recognitionError}
               isProcessing={false}
             />
           )}
@@ -111,11 +109,10 @@ const SpeechAnalysisDashboard = ({ data, isLoading, recordingData }) => {
                       <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}
-                        className={`px-6 py-3 text-sm font-medium transition-colors ${
-                          activeTab === tab
+                        className={`px-6 py-3 text-sm font-medium transition-colors ${activeTab === tab
                             ? "text-indigo-600 border-b-2 border-indigo-600"
                             : "text-gray-600 hover:text-gray-900"
-                        }`}
+                          }`}
                       >
                         {tab.charAt(0).toUpperCase() + tab.slice(1)}
                       </button>
