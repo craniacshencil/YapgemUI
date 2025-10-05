@@ -3,6 +3,7 @@ import { useState, useRef, useCallback } from "react";
 export const useAudioRecorder = () => {
   const [recording, setRecording] = useState(false);
   const [audioURL, setAudioURL] = useState(null);
+  const [audioBlob, setAudioBlob] = useState(null); // ADD THIS
   const [stream, setStream] = useState(null);
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
@@ -13,7 +14,6 @@ export const useAudioRecorder = () => {
         audio: true,
       });
       setStream(mediaStream);
-
       const mediaRecorder = new MediaRecorder(mediaStream);
       mediaRecorderRef.current = mediaRecorder;
       audioChunksRef.current = [];
@@ -28,6 +28,7 @@ export const useAudioRecorder = () => {
         });
         const url = URL.createObjectURL(audioBlob);
         setAudioURL(url);
+        setAudioBlob(audioBlob); // ADD THIS - store the blob
       };
 
       mediaRecorder.start();
@@ -47,6 +48,7 @@ export const useAudioRecorder = () => {
   return {
     recording,
     audioURL,
+    audioBlob, // ADD THIS to the return
     stream,
     startRecording,
     stopRecording,

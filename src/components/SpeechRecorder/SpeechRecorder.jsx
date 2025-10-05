@@ -14,11 +14,17 @@ export default function SpeechRecorder() {
     setIsAnalysisLoading,
     setRecordingData,
   } = useSpeechStore();
-
   const [recordingComplete, setRecordingComplete] = useState(false);
 
-  const { recording, audioURL, stream, startRecording, stopRecording } =
-    useAudioRecorder();
+  // ADD audioBlob to destructuring
+  const {
+    recording,
+    audioURL,
+    audioBlob,
+    stream,
+    startRecording,
+    stopRecording,
+  } = useAudioRecorder();
 
   const { elapsed, remaining } = useRecordingTimer(recording, speakTime, () => {
     stopRecording();
@@ -32,38 +38,40 @@ export default function SpeechRecorder() {
   }, [countdownComplete, recording, recordingComplete, startRecording]);
 
   useEffect(() => {
-    if (recordingComplete && audioURL) {
+    // CHANGE: Check for audioBlob instead of audioURL
+    if (recordingComplete && audioBlob) {
       const timer = setTimeout(() => {
         setRecordingData({
           duration: elapsed,
           audioURL: audioURL,
         });
-
         setIsAnalysisLoading(true);
         let topic = response.topic + " " + response.bullet_points.join(" ");
 
         const sendAudio = async () => {
           try {
+            // CHANGE: Pass audioBlob as first parameter
             const data = await speechAnalysisService.analyzeAudio(
-              elapsed,
-              speakTime,
-              topic,
+              audioBlob, // <- Send the blob
+              elapsed, // duration
+              speakTime, // speakTime
+              topic, // topic
+              "small", // whisper model (optional)
             );
             setAnalysis(data);
           } catch (error) {
+            console.error("Analysis error:", error);
           } finally {
             setIsAnalysisLoading(false);
           }
         };
-
         sendAudio();
       }, 1000);
-
       return () => clearTimeout(timer);
     }
   }, [
     recordingComplete,
-    audioURL,
+    audioBlob, // CHANGE: dependency from audioURL to audioBlob
     elapsed,
     speakTime,
     response,
@@ -72,7 +80,6 @@ export default function SpeechRecorder() {
     setAnalysis,
   ]);
 
-  // Only show recording view while actively recording
   if (!recording) {
     return null;
   }
