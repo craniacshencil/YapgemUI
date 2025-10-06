@@ -66,6 +66,12 @@ export default function SpeechRecorder() {
                 audioURL: audioURL,
                 errorMessage: data.detail,
               });
+            } else if (data.extras.note) {
+              setRecordingData({
+                duration: elapsed,
+                audioURL: audioURL,
+                wrongLang: "Not english",
+              });
             } else {
               setAnalysis(data);
             }

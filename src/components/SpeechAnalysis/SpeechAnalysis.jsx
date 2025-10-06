@@ -14,6 +14,8 @@ const SpeechAnalysisDashboard = ({ data, isLoading, recordingData }) => {
 
   if (recordingData) {
     const errorMessage = recordingData.errorMessage;
+    const wrongLang = recordingData.wrongLang;
+    console.log(wrongLang);
     return (
       <div className="bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-6 min-h-screen">
         <div className="max-w-6xl mx-auto space-y-8">
@@ -67,12 +69,27 @@ const SpeechAnalysisDashboard = ({ data, isLoading, recordingData }) => {
           {/* Show completed view if we have transcript */}
 
           {!isLoading && !errorMessage && (
-            <CompletedView
-              duration={recordingData.duration}
-              audioURL={recordingData.audioURL}
-              transcript={data?.extras?.transcript || "No transcript"}
-              isProcessing={false}
-            />
+            <>
+              <CompletedView
+                duration={recordingData.duration}
+                audioURL={recordingData.audioURL}
+                transcript={data?.extras?.transcript || "No transcript"}
+                isProcessing={false}
+              />
+              {wrongLang && (
+                <div className="max-w-4xl mx-auto p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
+                    <div>
+                      <p className="text-red-700 font-medium">Bad speech.</p>
+                      <p className="text-red-600 text-sm mt-1">
+                        Not english, diff language.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
           )}
 
           {/* Analysis Results */}
@@ -85,12 +102,14 @@ const SpeechAnalysisDashboard = ({ data, isLoading, recordingData }) => {
                   icon={<Sparkles className="w-5 h-5 text-purple-500" />}
                   value={`${Math.round(data.semantic_similarity * 100)}%`}
                   score={data.semantic_similarity}
+                  data={data}
                 />
                 <StatCard
                   label="Vocabulary"
                   icon={<BookOpen className="w-5 h-5 text-blue-500" />}
                   value={`${Math.round(data.vocabulary_richness * 100)}%`}
                   score={data.vocabulary_richness}
+                  data={data}
                 />
                 <SentimentCard sentiment={data.sentiment} />
                 <GrammarCard grammarIssues={data.grammar_issues} />
@@ -148,7 +167,7 @@ const SpeechAnalysisDashboard = ({ data, isLoading, recordingData }) => {
 };
 
 // Helper Components
-const StatCard = ({ label, icon, value, score }) => {
+const StatCard = ({ data, label, icon, value, score }) => {
   const getScoreColor = (score) => {
     if (score >= 0.8) return "text-green-600 bg-green-50";
     if (score >= 0.6) return "text-yellow-600 bg-yellow-50";
@@ -167,12 +186,13 @@ const StatCard = ({ label, icon, value, score }) => {
         <span className="text-sm text-gray-600">{label}</span>
         {icon}
       </div>
-      <div className="text-2xl font-bold text-gray-900">{value}</div>
+      <div className="text-2xl font-bold text-gray-900">
+        {data.note == "Language not English; returning zero scores" &&
+          getScoreLabel(score)}
+      </div>
       <div
         className={`text-xs font-medium mt-2 px-2 py-1 rounded-full inline-block ${getScoreColor(score)}`}
-      >
-        {getScoreLabel(score)}
-      </div>
+      ></div>
     </div>
   );
 };
